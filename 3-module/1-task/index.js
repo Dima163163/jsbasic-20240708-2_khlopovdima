@@ -1,9 +1,5 @@
 function namify(users) {
-  const newArrNames = [];
-
-  for (let user of users) {
-    newArrNames.push(user.name);
-  }
+  const newArrNames = users.map(user => user.name);
 
   return newArrNames;
 }
