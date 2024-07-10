@@ -1,3 +1,11 @@
 function filterRange(arr, a, b) {
-  // ваш код...
+  const newArrNumbers = [];
+
+  for (let number of arr) {
+    if (number >= a && number <= b) {
+      newArrNumbers.push(number);
+    }
+  }
+
+  return newArrNumbers;
 }
