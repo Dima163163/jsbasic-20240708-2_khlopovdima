@@ -1,3 +1,5 @@
 function namify(users) {
-  // ваш код...
+  const newArrNames = users.map(user => user.name);
+
+  return newArrNames;
 }
