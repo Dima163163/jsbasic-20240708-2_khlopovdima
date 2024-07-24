@@ -48,12 +48,7 @@ export default class Modal {
 
   closeModal() {
     const closeModalFunc = (e) => {
-      if (e.code === 'Escape') {
-        this.close();
-        document.removeEventListener('keydown', closeModalFunc);
-      }
-
-      if (e.target.closest('.modal__close')) {
+      if (e.code === 'Escape' || e.target.closest('.modal__close')) {
         this.close();
         document.removeEventListener('keydown', closeModalFunc);
       }
