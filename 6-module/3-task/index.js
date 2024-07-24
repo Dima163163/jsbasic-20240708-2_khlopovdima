@@ -4,8 +4,15 @@ export default class Carousel {
   constructor(slides) {
     this.slides = slides;
     this.renderCarousel();
+    this.count = 0;
+    this.sumWidthSlide = 0; 
+    this.carouselSlides = this.elem.querySelectorAll('.carousel__slide');
+    this.btnRight = this.elem.querySelector('.carousel__arrow_right');
+    this.btnLeft = this.elem.querySelector('.carousel__arrow_left');
+    this.carouselInner = this.elem.querySelector('.carousel__inner');
     this.changeSlide();
     this.productAdd();
+    this.showButton();
   }
 
   renderCarousel() {
@@ -44,76 +51,66 @@ export default class Carousel {
     this.elem.append(carouselInner);
   }
 
+  showButton() {
+    if (this.count === this.carouselSlides.length - 1) {
+      this.btnRight.style.display = 'none';
+      this.btnLeft.style.display = '';
+    }
+
+    if (this.count < this.carouselSlides.length - 1) {
+      this.btnRight.style.display = '';
+      this.btnLeft.style.display = '';
+    }
+
+    if (this.count === 0) {
+      this.btnRight.style.display = '';
+      this.btnLeft.style.display = 'none';
+    }
+  }
+
+  slideRight(slidesWidth) {
+    if (this.count < this.carouselSlides.length - 1) {
+      this.sumWidthSlide -= slidesWidth;
+      this.carouselInner.style.transform = `translateX(${this.sumWidthSlide}px)`;
+      this.count++;
+    }
+
+    this.showButton();
+  }
+
+  slideLeft(slidesWidth) {
+    if (this.count > 0) {
+      this.sumWidthSlide += slidesWidth;
+      this.carouselInner.style.transform = `translateX(${this.sumWidthSlide}px)`;
+      this.count--;
+    }
+
+    this.showButton();
+  }
+
   changeSlide() {
-    const carousel = this.elem;
-    const btnRight = carousel.querySelector('.carousel__arrow_right');
-    const btnLeft = carousel.querySelector('.carousel__arrow_left');
-    const carouselInner = carousel.querySelector('.carousel__inner');
-    const carouselSlides = carousel.querySelectorAll('.carousel__slide');
-    let width;
-
-    let sumWidthSlide = 0;
-    let conunt = 0;
-
-
-    function showButton() {
-      if (conunt === carouselSlides.length - 1) {
-        btnRight.style.display = 'none';
-        btnLeft.style.display = '';
-      }
-
-      if (conunt < carouselSlides.length - 1) {
-        btnRight.style.display = '';
-        btnLeft.style.display = '';
-      }
-
-      if (conunt === 0) {
-        btnRight.style.display = '';
-        btnLeft.style.display = 'none';
-      }
-    }
-
-    function slideRight() {
-      width = carouselSlides[0].offsetWidth;
-
-      if (conunt < carouselSlides.length - 1) {
-        sumWidthSlide -= width;
-        carouselInner.style.transform = `translateX(${sumWidthSlide}px)`;
-        conunt++;
-      }
-
-      showButton();
-    }
-
-    function slideLeft() {
-      width = carouselSlides[0].offsetWidth;
-
-      if (conunt > 0) {
-        sumWidthSlide += width;
-        carouselInner.style.transform = `translateX(${sumWidthSlide}px)`;
-        conunt--;
-      }
-
-      showButton();
-    }
-
-    showButton();
-    btnRight.addEventListener('click', slideRight);
-    btnLeft.addEventListener('click', slideLeft);
+    this.showButton();
+    this.btnRight.addEventListener('click', () => {
+      const slidesWidth = this.elem.querySelector('.carousel__slide').offsetWidth;
+      this.slideRight(slidesWidth);
+    });
+    this.btnLeft.addEventListener('click', () => {
+      const slidesWidth = this.elem.querySelector('.carousel__slide').offsetWidth;
+      this.slideLeft(slidesWidth);
+    });
   }
 
   productAdd() {
-    const addBtns = this.elem.querySelectorAll('.carousel__button');
-
-    addBtns.forEach(addBtn => {
-      addBtn.addEventListener('click', function (e) {
+    this.elem.addEventListener('click', (e) => {
+      if (e.target.closest('.carousel__button')) {
+        const addBtn = e.target.closest('.carousel__button');
         const idProduct = e.target.closest('.carousel__slide').dataset.id;
         const event = new CustomEvent('product-add', {
           detail: idProduct,
           bubbles: true
         });
         addBtn.dispatchEvent(event);
-      });
+      }
     });
   }
 }
