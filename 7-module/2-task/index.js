@@ -26,9 +26,11 @@ export default class Modal {
 
   setTitle(title) {
     const modalHeader = this.modal.querySelector('.modal__header');
-    const modalTitle = createElement(`
-      <h3 class="modal__title">${title}</h3>
-    `);
+
+    const modalTitle = document.createElement('h3');
+    modalTitle.className = 'modal__title';
+    modalTitle.textContent = title;
+
     modalHeader.append(modalTitle);
   }
 
