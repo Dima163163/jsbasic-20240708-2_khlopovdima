@@ -58,19 +58,11 @@ export default class CartIcon {
           left: leftIndent,
         });
       } else {
-        if (document.documentElement.clientWidth - this.elem.offsetWidth - 10 < document.querySelector('.container').getBoundingClientRect().right + 20) {
-          Object.assign(this.elem.style, {
-            position: 'fixed',
-            top: '50px',
-            left: leftIndent,
-          });
-        } else {
-          Object.assign(this.elem.style, {
-            position: 'fixed',
-            top: '50px',
-            left: leftIndent,
-          });
-        }
+        Object.assign(this.elem.style, {
+          position: 'fixed',
+          top: '50px',
+          left: leftIndent,
+        });
       }
 
       if (isMobile <= 767) {
