@@ -5,7 +5,7 @@ export default class CartIcon {
     this.render();
     this.addEventListeners();
     this.initialTopCoord =
-			this.elem.getBoundingClientRect().top + window.pageYOffset;
+			this.elem.getBoundingClientRect().top + window.scrollY;
   }
 
   render() {
@@ -44,34 +44,36 @@ export default class CartIcon {
 
     if (cartIconVisible) {
       const isMobile = document.documentElement.clientWidth;
+      const container = document.querySelector('.container');
+      if (container) {
+        const leftIndent = Math.min(
+          document.querySelector('.container').getBoundingClientRect().right + 20,
+          document.documentElement.clientWidth - this.elem.offsetWidth - 10
+        ) + 'px';
 
-      const leftIndent = Math.min(
-        document.querySelector('.container').getBoundingClientRect().right + 20,
-        document.documentElement.clientWidth - this.elem.offsetWidth - 10
-      ) + 'px';
+        if (window.scrollY > this.initialTopCoord) {
+          Object.assign(this.elem.style, {
+            position: 'fixed',
+            top: '50px',
+            zIndex: 1000,
+            left: leftIndent,
+          });
+        } else {
+          Object.assign(this.elem.style, {
+            position: 'fixed',
+            top: '50px',
+            left: leftIndent,
+          });
+        }
 
-      if (window.pageYOffset > this.initialTopCoord) {
-        Object.assign(this.elem.style, {
-          position: 'fixed',
-          top: '50px',
-          zIndex: 1000,
-          left: leftIndent,
-        });
-      } else {
-        Object.assign(this.elem.style, {
-          position: 'fixed',
-          top: '50px',
-          left: leftIndent,
-        });
-      }
-
-      if (isMobile <= 767) {
-        Object.assign(this.elem.style, {
-          position: '',
-          top: '',
-          zIndex: '',
-          left: '',
-        });
+        if (isMobile <= 767) {
+          Object.assign(this.elem.style, {
+            position: '',
+            top: '',
+            zIndex: '',
+            left: '',
+          });
+        }
       }
     }
   }
