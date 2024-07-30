@@ -5,10 +5,11 @@ export default class ProductGrid {
   constructor(products) {
     this.products = products;
     this.filters = {};
-    this.renderProductGrid();
+    this.renderProductGrid(this.products);
   }
 
-  renderProductGrid() {
+  renderProductGrid(products) {
+    console.log(products);
     this.elem = createElement(`
       <div class="products-grid">
         <div class="products-grid__inner">
@@ -16,7 +17,7 @@ export default class ProductGrid {
       </div>
     `);
 
-    this.products.forEach(product => {
+    products.forEach(product => {
       const card = new ProductCard(product);
       this.elem.querySelector('.products-grid__inner').append(card.elem);
     });
@@ -25,26 +26,23 @@ export default class ProductGrid {
   updateFilter(filters) {
     Object.assign(this.filters, filters);
 
-    this.products = this.products.filter((product) => {
-      if (this.filters.noNuts) {
-        return product.nuts !== this.filters.noNuts;
-      }
-      
-      if (this.filters.vegeterianOnly) {
-        return product.vegeterian === this.filters.vegeterianOnly;
-      }
+    this.productsFilteredAfter = [...this.products];
+    if (this.filters.noNuts) {
+      this.productsFilteredAfter = [...this.productsFilteredAfter.filter(product => product.nuts === undefined || product.nuts === false)];
+    }
 
-      if (this.filters.category) {
-        return product.category === this.filters.category;
-      }
+    if (this.filters.vegeterianOnly) {
+      this.productsFilteredAfter = [...this.productsFilteredAfter.filter(product => product.vegeterian === true)];
+    }
 
-      if (this.filters.maxSpiciness) {
-        return product.spiciness <= this.filters.maxSpiciness;
-      }
+    if (this.filters.category) {
+      this.productsFilteredAfter = [...this.productsFilteredAfter.filter(product => product.category === this.filters.category)];
+    }
 
-      return product;
-    });
+    if (this.filters.maxSpiciness) {
+      this.productsFilteredAfter = [...this.productsFilteredAfter.filter(product => product.spiciness <= this.filters.maxSpiciness)];
+    }
 
-    this.renderProductGrid();
+    this.renderProductGrid(this.productsFilteredAfter);
   }
 }
