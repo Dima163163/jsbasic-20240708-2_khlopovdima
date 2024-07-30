@@ -61,6 +61,48 @@ export default class StepSlider {
     });
   }
 
+  onMouseMove = (mouseMoveEvent) => {
+    const left = mouseMoveEvent.clientX - this.elem.getBoundingClientRect().left;
+    let leftRelative = left / this.elem.offsetWidth;
+    if (leftRelative < 0) {
+      leftRelative = 0;
+    }
+
+    if (leftRelative > 1) {
+      leftRelative = 1;
+    }
+    let leftPercents = leftRelative * 100;
+
+    const stepValue = leftRelative * this.segments;
+    const stepValueCeil = Math.round(stepValue);
+    this.sliderValue.textContent = stepValueCeil;
+    this.value = stepValueCeil;
+    this.percents = leftPercents;
+    this.thumb.style.left = `${leftPercents}%`;
+    this.sliderProgress.style.width = `${leftPercents}%`;
+    this.sliderStepsSpans.forEach((span) => {
+      if (span.dataset.stepValue === this.sliderValue.textContent) {
+        span.classList.add('slider__step-active');
+      } else {
+        span.classList.remove('slider__step-active');
+      }
+    });
+  };
+
+  offMouseMove = () => {
+    const valuePercents = this.value / this.segments * 100;
+    this.thumb.style.left = `${valuePercents}%`;
+    this.sliderProgress.style.width = `${valuePercents}%`;
+    const event = new CustomEvent('slider-change', {
+      detail: this.value,
+      bubbles: true
+    });
+    this.elem.dispatchEvent(event);
+
+    document.removeEventListener('pointermove', this.onMouseMove);
+    this.thumb.removeEventListener('pointerup', this.offMouseMove);
+  };
+
   changeValueMouse() {
     this.thumb.ondragstart = () => false;
 
@@ -68,52 +110,8 @@ export default class StepSlider {
       this.elem.classList.add('slider_dragging');
       this.thumb.style.position = 'absolute';
 
-      const onMouseMove = (mouseMoveEvent) => {
-        const left = mouseMoveEvent.clientX - this.elem.getBoundingClientRect().left;
-        let leftRelative = left / this.elem.offsetWidth;
-        if (leftRelative < 0) {
-          leftRelative = 0;
-        }
-
-        if (leftRelative > 1) {
-          leftRelative = 1;
-        }
-        let leftPercents = leftRelative * 100;
-
-
-        const stepValue = leftRelative * this.segments;
-        const stepValueCeil = Math.round(stepValue);
-        this.sliderValue.textContent = stepValueCeil;
-        this.value = stepValueCeil;
-        this.percents = leftPercents;
-        this.thumb.style.left = `${leftPercents}%`;
-        this.sliderProgress.style.width = `${leftPercents}%`;
-        this.sliderStepsSpans.forEach((span) => {
-          if (span.dataset.stepValue === this.sliderValue.textContent) {
-            span.classList.add('slider__step-active');
-          } else {
-            span.classList.remove('slider__step-active');
-          }
-        });
-      };
-
-      const offMouseMove = () => {
-        const valuePercents = this.value / this.segments * 100;
-        this.thumb.style.left = `${valuePercents}%`;
-        this.sliderProgress.style.width = `${valuePercents}%`;
-        const event = new CustomEvent('slider-change', {
-          detail: this.value,
-          bubbles: true
-        });
-        this.elem.dispatchEvent(event);
-        document.removeEventListener('pointermove', onMouseMove);
-        this.thumb.removeEventListener('pointerup', offMouseMove);
-      };
-
-
-      document.addEventListener('pointermove', onMouseMove);
-
-      this.thumb.addEventListener('pointerup', offMouseMove);
+      document.addEventListener('pointermove', this.onMouseMove);
+      this.thumb.addEventListener('pointerup', this.offMouseMove);
     });
   }
 }
