@@ -143,7 +143,8 @@ export default class Cart {
         this.updateProductCount(cartProduct.dataset.productId, 1);
       }
     });
-    this.modal.modal.addEventListener('submit', async(e) => {
+    const cartForm = this.modal.modal.querySelector('.cart-form');
+    cartForm.addEventListener('submit', async(e) => {
       e.preventDefault();
       await this.onSubmit(e);
     });
@@ -177,25 +178,20 @@ export default class Cart {
     const cartBtn = this.modal.modal.querySelector('[type="submit"]');
     cartBtn.classList.add('is-loading');
 
-    const formData = new FormData(event.target);
-    const postData = Object.fromEntries(formData);
-
     const response = await fetch('https://httpbin.org/post', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(postData)
+      body: new FormData(event.target)
     });
 
     if (response.ok) {
-      this.cartItems = [];
+      this.cartItems.length = 0;
+      console.log(this);
       this.cartIcon.update(this);
       const title = this.modal.modal.querySelector('.modal__title');
       const modalBody = this.modal.modal.querySelector('.modal__body');
 
       title.textContent = 'Success!';
-      console.log('this.cartItems: ', this.cartItems);
+
       modalBody.innerHTML = `
       <div class="modal__body-inner">
         <p>
