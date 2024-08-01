@@ -185,7 +185,7 @@ export default class Cart {
 
     if (response.ok) {
       this.cartItems.length = 0;
-      console.log(this);
+
       this.cartIcon.update(this);
       const title = this.modal.modal.querySelector('.modal__title');
       const modalBody = this.modal.modal.querySelector('.modal__body');
