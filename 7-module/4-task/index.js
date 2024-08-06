@@ -1,11 +1,13 @@
 import createElement from '../../assets/lib/create-element.js';
 export default class StepSlider {
   constructor({ steps, value = 0 }) {
+    this.steps = steps;
+    this.value = value;
     this.segments = steps - 1;
     this.elem = createElement(`
       <div class="slider">
         <div class="slider__thumb">
-          <span class="slider__value">${value}</span>
+          <span class="slider__value">${this.value}</span>
         </div>
 
         <div class="slider__progress"></div>
@@ -26,22 +28,35 @@ export default class StepSlider {
     this.thumb = this.elem.querySelector('.slider__thumb');
     this.sliderValue = this.elem.querySelector('.slider__value');
     this.sliderStepsSpans = this.sliderSteps.querySelectorAll('span');
-    this.sliderProgress.style.width = '0%';
+    this.valueInitial();
     this.changeValue(steps);
     this.changeValueMouse(steps);
   }
 
-  changeValue(steps) {
+  valueInitial() {
+    const valuePercents = this.value / this.segments * 100;
+    this.sliderValue.textContent = this.value;
+    this.thumb.style.left = `${valuePercents}%`;
+    this.sliderProgress.style.width = `${valuePercents}%`;
+    this.sliderStepsSpans.forEach(span => {
+      if (span.dataset.stepValue === this.sliderValue.textContent) {
+        span.classList.add('slider__step-active');
+      } else {
+        span.classList.remove('slider__step-active');
+      }
+    });
+  }
+
+  changeValue() {
     this.elem.addEventListener('click', (e) => {
       let rect = this.elem.getBoundingClientRect();
       const left = e.clientX - rect.left;
       const leftRelative = left / this.elem.offsetWidth;
-      const segments = steps - 1;
-      const stepValue = leftRelative * segments;
+
+      const stepValue = leftRelative * this.segments;
       const stepValueCeil = Math.round(stepValue);
       this.value = stepValueCeil;
-      const valuePercents = stepValueCeil / segments * 100;
-
+      const valuePercents = stepValueCeil / this.segments * 100;
       this.sliderValue.textContent = stepValueCeil;
       this.thumb.style.left = `${valuePercents}%`;
       this.sliderProgress.style.width = `${valuePercents}%`;
