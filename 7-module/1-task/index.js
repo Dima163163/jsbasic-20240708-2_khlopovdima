@@ -2,6 +2,7 @@ import createElement from '../../assets/lib/create-element.js';
 
 export default class RibbonMenu {
   constructor(categories) {
+    this.value = '';
     this.categories = categories;
     this.renderRibbonMenu();
     this.ribbonInner = this.elem.querySelector('.ribbon__inner');
@@ -92,6 +93,7 @@ export default class RibbonMenu {
           ribbonItem.classList.remove('ribbon__item_active');
         });
         e.target.classList.add('ribbon__item_active');
+        this.value = e.target.textContent.toLowerCase();
 
         const category = e.target.dataset;
         const event = new CustomEvent('ribbon-select', {
